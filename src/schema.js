@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 const FieldTypes = {
   ObjectId: 1,
   ArrayOf: 2,
@@ -13,6 +15,11 @@ const FieldTypes = {
 
 class Schema {
   constructor(options) {
+    if(!options.hasOwnProperty('fields')) {
+      this.fields = options;
+      return false;
+    }
+
     const { fields } = options;
 
     this.fields = fields;
