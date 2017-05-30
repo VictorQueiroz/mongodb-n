@@ -46,7 +46,7 @@ describe('Integration', function() {
   });
 
   it('should support array of references', async function() {
-    const g = new Array(2);
+    const g = new Array(64);
 
     for(let i = 0; i < g.length; i++) {
       g[i] = {
@@ -60,7 +60,7 @@ describe('Integration', function() {
       name: 'product 1',
       geopoints: geopoints.map(geo => geo._id)
     });
-    
+
     assert.deepEqual(await models.Product.findOne({_id: product._id}), {
       products: [product],
       geopoints: geopoints
