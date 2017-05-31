@@ -1,13 +1,21 @@
 import _ from 'lodash';
 import Schema from './schema';
 import { ObjectId } from 'bson';
+import SchemaValidator from './schema-validator';
 import ExecutionerCursor from './executioner-cursor';
 
 const { FieldTypes } = Schema;
 
+class ValidationError extends Error {
+
+}
+
 class Executioner {
   constructor({ db }) {
     this.db = db;
+    this.validator = new SchemaValidator({
+      db
+    });
   }
 
   find(schema, collections, query) {
@@ -23,21 +31,20 @@ class Executioner {
     return _.isNumber(field) ? field : field.type;
   }
 
-  beforeInsertOne(schema, raw) {
-    const properties = Object.keys(schema.fields);
+  async beforeInsertOne(schema, raw) {
+    const errors = await this.validator.validate(schema, raw);
 
-    for(let i = 0; i < properties.length; i++) {
-      const property = properties[i];
-      const field = schema.fields[property];
-      const type = this.getFieldType(field);
+    if(errors.length > 0) {
+      const reason = new ValidationError('ER_MONGODB_VALIDATION');
 
-      // TODO: do some business with fields
+      reason.errors = errors;
+      throw reason;
     }
   }
 
   async insertMany(schema, list) {
     for(let i = 0; i < list.length; i++) {
-      this.beforeInsertOne(schema, list[i]);
+      await this.beforeInsertOne(schema, list[i]);
     }
     const result = await this.db.collection(schema.collection).insertMany(list);
 
@@ -45,7 +52,7 @@ class Executioner {
   }
 
   async insertOne(schema, raw) {
-    this.beforeInsertOne(schema, raw);
+    await this.beforeInsertOne(schema, raw);
 
     const result = await this.db.collection(schema.collection).insertOne(raw);
 

@@ -1,4 +1,4 @@
-import { Schema, FieldTypes } from '../../src';
+import { Schema, FieldTypes, SchemaValidators } from '../../src';
 
 const User = new Schema({
   collection: 'users',

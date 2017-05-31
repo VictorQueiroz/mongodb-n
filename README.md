@@ -1,4 +1,4 @@
-The main reason I created this module is to retrieve normalized data from MongoDB and still keep the native awesome API provided by `mongodb` module. If you're looking for something fancier to return your data in a denormalized way, you should try Mongoose.
+The main reason I created this module is to retrieve normalized data from MongoDB and still keep the native awesome API provided by `mongodb` module. If you're looking for something fancier you should try Mongoose.
 
 ```js
 import { FieldTypes, Schema, createModels } from 'mongodb-n';
@@ -39,7 +39,9 @@ const Post = new Schema({
 
 // models/index.js
 module.exports = async function createModels() {
-  createModels(await MongoClient.connect('mongodb://localhost/well_designed_db'), {
+  createModels(await MongoClient.connect('mongodb://localhost/well_designed_db', {
+    promiseLibrary: require('bluebird')
+  }), {
     User,
     Post,
     Comment
@@ -77,4 +79,50 @@ assert.deepEqual(await models.Post.find().toArray(), {
     authorId: user._id
   }]
 });
+```
+
+### Validation
+
+Generally validators will be used during `insertOne`, `insertMany`, `updateOne` and `updateMany` operations.
+
+```js
+import { Validators, FieldTypes, Schema } from 'mongodb-n';
+
+const customTitleValidator = Validators.createValidator('customTitleValidator', function(field, value) {
+  return /^[A-z0-9]+$/.test(value);
+});
+
+new Schema({
+  title: {
+    type: FieldTypes.String,
+    validation: [Validators.required, Validators.max(255), customTitleValidator]
+  },
+  emailAddress: {
+    type: FieldTypes.String,
+    validation: [
+      Validators.required,
+      Validators.unique(
+        'users' /* collection */,
+        'email' /* collection document property */
+      )
+    ]
+  }
+});
+```
+
+If an invalid field is found, a proper error will be throwed in the promise. And it could be handled like:
+```
+UserController.prototype.createUser = async function createUser() {
+  try {
+    return await models.User.insertOne({
+      title: '****'
+    });
+  } catch(reason) {
+    if(reason.message === 'ER_MONGODB_VALIDATION') {
+      // Handle it through `reason.errors` expression
+    } else {
+      // Do something else
+    }
+  }
+};
 ```

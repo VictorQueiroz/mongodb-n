@@ -1,8 +1,10 @@
 import Schema from './schema';
 import Executioner from './executioner';
+import SchemaValidator from '../src/schema-validator';
 import SchemaExecutioner from '../src/schema-executioner';
 
 const { FieldTypes } = Schema;
+const { Validators } = SchemaValidator;
 
 export async function createModels(db, schemas) {
   const models = {};
@@ -23,6 +25,8 @@ export async function createModels(db, schemas) {
 
 export {
   Schema,
+  Validators,
   FieldTypes,
-  Executioner
+  Executioner,
+  SchemaValidator
 };
