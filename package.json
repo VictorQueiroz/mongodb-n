@@ -15,7 +15,8 @@
     "babel-register": "^6.24.1",
     "faker": "^4.1.0",
     "mocha": "^3.4.2",
-    "mongodb": "^2.2.27"
+    "mongodb": "^2.2.27",
+    "mongoose": "^4.10.4"
   },
   "dependencies": {
     "babel-runtime": "^6.23.0"
