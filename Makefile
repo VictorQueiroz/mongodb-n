@@ -6,3 +6,5 @@ test:
 
 release: test
 	./node_modules/.bin/babel src/ -d lib
+
+.PHONY: test tdd release
