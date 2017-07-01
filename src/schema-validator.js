@@ -21,6 +21,10 @@ const Validators = {
         return value.every(id => ObjectId.isValid(id));
       }
       return ObjectId.isValid(value);
+    } else if(field.type & FieldTypes.ArrayOf) {
+      if(field.type & FieldTypes.Schema) {
+        return _.isArray(value);
+      }
     }
     return false;
   }),

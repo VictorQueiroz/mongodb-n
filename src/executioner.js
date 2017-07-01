@@ -117,11 +117,27 @@ class Executioner {
       } else if(type & FieldTypes.ArrayOf) {
         const { reference: ref } = field;
 
-        if(!collections.hasOwnProperty(ref.collection)) {
+        if(ref && !collections.hasOwnProperty(ref.collection)) {
           collections[ref.collection] = [];
         }
 
-        if(type & FieldTypes.ObjectId) {
+        if(type & FieldTypes.Schema) {
+          if(record.hasOwnProperty(property)) {
+            const list = record[property];
+            const schema = field.schema;
+            const listLength = list.length;
+            const targetList = new Array(listLength);
+
+            for(let j = 0; j < listLength; j++) {
+              targetList[j] = {};
+              await this.transform(schema, targetList[j], collections, list[j]);
+            }
+
+            result[property] = targetList;
+          } else {
+            result[property] = [];
+          }
+        } else if(type & FieldTypes.ObjectId) {
           if(type & FieldTypes.ForeignerReference) {
             await this.find(ref, collections, {
               [field.property]: record._id

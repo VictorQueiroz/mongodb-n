@@ -10,7 +10,8 @@ const FieldTypes = {
   Number: 64,
   Array: 128,
   ForeignerReference: 256,
-  Buffer: 512
+  Buffer: 512,
+  Schema: 1024
 };
 
 class Schema {

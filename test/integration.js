@@ -18,6 +18,29 @@ describe('Integration', function() {
     await db.close();
   });
 
+  it('should support array of predefined schema', async function() {
+    const [subject1, subject2] = await models.Subject.insertMany([{
+      title: 'Nice Subject 1'
+    }, {
+      title: 'Nice Subject 2'
+    }]);
+    const [politician] = await models.Politician.insertOne({
+      subjects: [{
+        subjectId: subject1._id,
+        flags: 1
+      }, {
+        subjectId: subject2._id,
+        flags: 1
+      }]
+    });
+    const result = await models.Politician.findOne();
+
+    assert.deepEqual(result, {
+      subjects: [subject1, subject2],
+      politicians: [politician]
+    });
+  });
+
   it('should support deep schema definition', async function() {
     const [user] = await models.User.insertOne({
       name: 'John Wick',

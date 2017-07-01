@@ -8,6 +8,31 @@ const User = new Schema({
   }
 });
 
+const Subject = new Schema({
+  collection: 'subjects',
+  fields: {
+    title: FieldTypes.String
+  }
+});
+
+const Politician = new Schema({
+  collection: 'politicians',
+  fields: {
+    subjects: {
+      type: FieldTypes.ArrayOf | FieldTypes.Schema,
+      schema: new Schema({
+        fields: {
+          subjectId: {
+            type: FieldTypes.ObjectId | FieldTypes.SchemaReference,
+            reference: Subject
+          },
+          flags: FieldTypes.Number
+        }
+      })
+    }
+  }
+});
+
 const Comment = new Schema({
   collection: 'comments',
   fields: {
@@ -70,5 +95,7 @@ module.exports = {
   User,
   Post,
   Product,
+  Politician,
+  Subject,
   Comment
 };
