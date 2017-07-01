@@ -1,7 +1,7 @@
 import Schema from './schema';
 import Executioner from './executioner';
-import SchemaValidator from '../src/schema-validator';
-import SchemaExecutioner from '../src/schema-executioner';
+import SchemaValidator from './schema-validator';
+import SchemaExecutioner from './schema-executioner';
 
 const { FieldTypes } = Schema;
 const { Validators } = SchemaValidator;
