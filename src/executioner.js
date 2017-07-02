@@ -166,7 +166,14 @@ class Executioner {
         });
 
         result[property] = record[property];
-      } else if([Schema.FieldTypes.String, Schema.FieldTypes.Number, Schema.FieldTypes.Boolean, Schema.FieldTypes.ObjectId].some(f => type & f)) {
+      } else if([
+        Schema.FieldTypes.Array,
+        Schema.FieldTypes.String,
+        Schema.FieldTypes.Number,
+        Schema.FieldTypes.Object,
+        Schema.FieldTypes.Boolean,
+        Schema.FieldTypes.ObjectId
+      ].some(f => type & f)) {
         if(record.hasOwnProperty(property)) {
           result[property] = record[property];
         }
