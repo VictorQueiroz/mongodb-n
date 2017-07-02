@@ -33,6 +33,15 @@ const Politician = new Schema({
   }
 });
 
+const Picture = new Schema({
+  collection: 'pictures',
+  fields: {
+    width: FieldTypes.Number,
+    height: FieldTypes.Number,
+    cached: FieldTypes.Buffer
+  }
+});
+
 const Comment = new Schema({
   collection: 'comments',
   fields: {
@@ -94,6 +103,7 @@ module.exports = {
   GeoPoint,
   User,
   Post,
+  Picture,
   Product,
   Politician,
   Subject,

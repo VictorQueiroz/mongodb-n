@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import Schema from './schema';
+import { Buffer } from 'buffer';
 import { ObjectId } from 'bson';
 
 const { FieldTypes } = Schema;
@@ -10,7 +11,9 @@ const Validators = {
     if(field.type & FieldTypes.ForeignerReference) {
       return true;
     }
-    if(field.type & FieldTypes.String) {
+    if(field.type & FieldTypes.Buffer) {
+      return Buffer.isBuffer(value);
+    } else if(field.type & FieldTypes.String) {
       return _.isString(value);
     } else if(field.type & FieldTypes.Number) {
       return _.isNumber(value);

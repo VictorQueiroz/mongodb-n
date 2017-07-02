@@ -1,4 +1,5 @@
 import faker from 'faker';
+import crypto from 'crypto';
 import assert from 'assert';
 import schemas from './fixtures/schemas';
 import { MongoClient } from 'mongodb';
@@ -16,6 +17,19 @@ describe('Integration', function() {
   afterEach(async function() {
     await db.dropDatabase();
     await db.close();
+  });
+
+  it('should support buffer', async function() {
+    const buffer = crypto.randomBytes(32);
+    const [picture] = await models.Picture.insertOne({
+      width: 0,
+      height: 0,
+      cached: buffer
+    });
+
+    assert.deepEqual(await models.Picture.findOne(), {
+      pictures: [picture]
+    });
   });
 
   it('should support array of predefined schema', async function() {
