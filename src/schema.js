@@ -29,6 +29,10 @@ class Schema {
     } else {
       this.virtualSchema = true;
     }
+
+    if(options.hasOwnProperty('methods')) {
+      this.methods = options.methods;
+    }
   }
 }
 

@@ -1,5 +1,6 @@
 import { Schema, FieldTypes, SchemaValidators } from '../../src';
 
+
 const User = new Schema({
   collection: 'users',
   fields: {
@@ -12,6 +13,13 @@ const Subject = new Schema({
   collection: 'subjects',
   fields: {
     title: FieldTypes.String
+  },
+  methods: {
+    createSubject: async function(models, title) {
+      return this.insertOne({
+        title
+      });
+    }
   }
 });
 

@@ -19,6 +19,15 @@ describe('Integration', function() {
     await db.close();
   });
 
+  it('should support "methods" schema property', async function() {
+    const [subject1] = await models.Subject.createSubject('subject 1');
+
+    assert.deepEqual(subject1, {
+      _id: subject1._id,
+      title: 'subject 1'
+    });
+  });
+
   it('should support buffer', async function() {
     const buffer = crypto.randomBytes(32);
     const [picture] = await models.Picture.insertOne({

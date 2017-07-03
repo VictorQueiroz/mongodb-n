@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import Schema from './schema';
 import Executioner from './executioner';
 import SchemaValidator from './schema-validator';
@@ -14,10 +15,27 @@ export async function createModels(db, schemas) {
   });
 
   Object.keys(schemas).forEach(key => {
+    const schema = schemas[key];
+
     models[key] = new SchemaExecutioner({
       exec,
-      schema: schemas[key]
+      schema
     });
+
+    if(schema.hasOwnProperty('methods')) {
+      const methods = schema.methods;
+      const model = models[key];
+
+      _.forEach(methods, function(value, key) {
+        if(model.hasOwnProperty(key)) {
+          throw new Error(`You can't replace property "${key}"`);
+        }
+
+        model[key] = function(...args) {
+          return value.call(model, models, ...args);
+        };
+      });
+    }
   });
 
   return models;
