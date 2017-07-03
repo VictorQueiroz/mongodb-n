@@ -115,7 +115,9 @@ class Executioner {
         result[property] = {};
         await this.transform(field, result[property], collections, record[property]);
       } else if(type & FieldTypes.Buffer) {
-        result[property] = record[property].read(0);
+        if(record.hasOwnProperty(property)) {
+          result[property] = record[property].read(0);
+        }
       } else if(type & FieldTypes.ArrayOf) {
         const { reference: ref } = field;
 
