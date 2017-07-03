@@ -15,15 +15,14 @@ const FieldTypes = {
 };
 
 class Schema {
-  constructor(options) {
+  constructor(options = {}) {
     if(!options.hasOwnProperty('fields')) {
       this.fields = options;
-      return false;
+    } else {
+      const { fields } = options;
+
+      this.fields = fields;
     }
-
-    const { fields } = options;
-
-    this.fields = fields;
 
     if(options.hasOwnProperty('collection')) {
       this.collection = options.collection;
