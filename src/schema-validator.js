@@ -13,6 +13,8 @@ const Validators = {
     }
     if(field.type & FieldTypes.Buffer) {
       return Buffer.isBuffer(value);
+    } else if(field.type & FieldTypes.Object) {
+      return _.isObject(value);
     } else if(field.type & FieldTypes.String) {
       return _.isString(value);
     } else if(field.type & FieldTypes.Number) {
