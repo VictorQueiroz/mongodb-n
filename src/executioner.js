@@ -43,12 +43,17 @@ class Executioner {
   }
 
   async insertMany(schema, list) {
-    for(let i = 0; i < list.length; i++) {
-      await this.beforeInsertOne(schema, list[i]);
-    }
-    const result = await this.db.collection(schema.collection).insertMany(list);
+    const listLength = list.length;
 
-    return result.ops;
+    if(listLength) {
+      for(let i = 0; i < listLength; i++) {
+        await this.beforeInsertOne(schema, list[i]);
+      }
+      const result = await this.db.collection(schema.collection).insertMany(list);
+
+      return result.ops;
+    }
+    return [];
   }
 
   async insertOne(schema, raw) {

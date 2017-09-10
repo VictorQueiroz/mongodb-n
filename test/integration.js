@@ -19,6 +19,10 @@ describe('Integration', function() {
     await db.close();
   });
 
+  it('should handle empty insertMany', async function() {
+    assert.deepEqual(await models.Subject.insertMany([]), []);
+  });
+
   it('should support "methods" schema property', async function() {
     const [subject1] = await models.Subject.createSubject('subject 1');
 
