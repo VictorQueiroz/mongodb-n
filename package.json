@@ -16,7 +16,8 @@
     "faker": "^4.1.0",
     "mocha": "^3.4.2",
     "mongodb": "^2.2.27",
-    "mongoose": "^4.10.4"
+    "mongoose": "^4.10.4",
+    "tape": "^4.8.0"
   },
   "dependencies": {
     "babel-runtime": "^6.23.0",

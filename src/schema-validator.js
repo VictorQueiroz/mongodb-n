@@ -8,7 +8,7 @@ const { FieldTypes } = Schema;
 const Validators = {
   checkFieldType: createValidator('checkFieldType', function(field, value) {
     // ignore foreigner references
-    if(field.type & FieldTypes.ForeignerReference) {
+    if(field.type & FieldTypes.ForeignerReference || field.type & FieldTypes.ConditionalSchema) {
       return true;
     }
     if(field.type & FieldTypes.Buffer) {

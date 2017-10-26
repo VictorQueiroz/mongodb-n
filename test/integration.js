@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash';
 import faker from 'faker';
 import crypto from 'crypto';
 import assert from 'assert';
@@ -92,6 +93,39 @@ describe('Integration', function() {
       }],
       geopoints: [],
       users: [user]
+    });
+  });
+
+  it('should not return repeated _id in responses', function(){
+
+  });
+
+  it('should support conditional schema according to raw incoming document data', async function(){
+    const [user] = await models.User.insertOne({
+      name: 'John Wick',
+      biography: 'I\'m phenomenal'
+    });
+    const [product] = await models.Product.insertOne({
+      name: 'MacBook Pro',
+      geopoints: [],
+      authorInfo: {
+        biography: 'Old biography',
+        authorId: user._id
+      }
+    });
+    const [timeline] = await models.Timeline.insertOne({
+      type: schemas.Timeline.Types.UserFavoriteProduct,
+      contents: {
+        userId: user._id,
+        productId: product._id
+      }
+    });
+
+    assert.deepEqual(await models.Timeline.findOne(), {
+      users: [user],
+      geopoints: [],
+      timeline: [timeline],
+      products: [product]
     });
   });
 

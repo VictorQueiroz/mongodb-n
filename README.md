@@ -81,6 +81,45 @@ assert.deepEqual(await models.Post.find().toArray(), {
 });
 ```
 
+### Conditional schemas
+
+We can use this feature for when a content of a specific field depend specifically on the raw MongoDB document content. For example, if we have a timeline in which the `contents` attribute depends specifically in what is present on `type` attribute, we should have a schema like this:
+
+```js
+const Timeline = new Schema({
+  collection: 'timeline',
+  fields: {
+    type: {
+      type: FieldTypes.String,
+      validation: [Validators.required]
+    },
+    contents: {
+      type: FieldTypes.ConditionalSchema,
+      getSchema: function({ type }){
+        switch(type){
+          case Timeline.Types.UserFavoriteProduct:
+            return new Schema({
+              userId: {
+                type: FieldTypes.ObjectId | FieldTypes.SchemaReference,
+                reference: User
+              },
+              productId: {
+                type: FieldTypes.ObjectId | FieldTypes.SchemaReference,
+                reference: Product
+              },
+              date: FieldTypes.Number
+            });
+        }
+      }
+    }
+  }
+});
+
+Timeline.Types = {
+  UserFavoriteProduct: 'Timeline/UserFavoriteProduct'
+};
+```
+
 ### Validation
 
 Generally validators will be used during `insertOne`, `insertMany`, `updateOne` and `updateMany` operations.

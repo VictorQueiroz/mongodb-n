@@ -1,4 +1,4 @@
-import { Schema, FieldTypes, SchemaValidators } from '../../src';
+import { Schema, FieldTypes, Validators } from '../../src';
 
 
 const User = new Schema({
@@ -107,6 +107,39 @@ const Product = new Schema({
   }
 });
 
+const Timeline = new Schema({
+  collection: 'timeline',
+  fields: {
+    type: {
+      type: FieldTypes.String,
+      validation: [Validators.required]
+    },
+    contents: {
+      type: FieldTypes.ConditionalSchema,
+      getSchema: function({ type }){
+        switch(type){
+          case Timeline.Types.UserFavoriteProduct:
+            return new Schema({
+              userId: {
+                type: FieldTypes.ObjectId | FieldTypes.SchemaReference,
+                reference: User
+              },
+              productId: {
+                type: FieldTypes.ObjectId | FieldTypes.SchemaReference,
+                reference: Product
+              },
+              date: FieldTypes.Number
+            });
+        }
+      }
+    }
+  }
+});
+
+Timeline.Types = {
+  UserFavoriteProduct: 'Timeline_UserFavoriteProduct'
+};
+
 module.exports = {
   GeoPoint,
   User,
@@ -115,5 +148,6 @@ module.exports = {
   Product,
   Politician,
   Subject,
-  Comment
+  Comment,
+  Timeline
 };

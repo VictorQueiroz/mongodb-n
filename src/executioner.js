@@ -18,11 +18,12 @@ class Executioner {
     });
   }
 
-  find(schema, collections, query) {
+  find(schema, collections, query, operation) {
     return new ExecutionerCursor({
       exec: this,
       schema,
       cursor: this.db.collection(schema.collection).find(query),
+      operation,
       collections
     });
   }
@@ -64,12 +65,13 @@ class Executioner {
     return result.ops;
   }
 
-  async findOne(schema, collections, query) {
+  async findOne(schema, collections, query, operation) {
     let record;
+
     const { collection } = schema;
 
     if((record = await this.db.collection(collection).findOne(query))) {
-      await this.transform(schema, {}, collections, record);
+      await this.transform(schema, {}, collections, record, operation);
     }
 
     return record ? collections : record;
@@ -94,18 +96,31 @@ class Executioner {
     return ids;
   }
 
-  async transform(schema, result, collections, record) {
+  async transform(schema, result, collections, record, operation = {}) {
     const properties = Object.keys(schema.fields);
     const propsLength = properties.length;
 
+    if(!operation.hasOwnProperty('processedIds'))
+      operation.processedIds = {};
+
     if(!schema.virtualSchema) {
+      const recordId = record._id.toString();
+
+      // console.log(recordId, operation.processedIds);
+
+      // avoid already processed documents
+      if(operation.processedIds[recordId]){
+        console.log('ignoring %s', recordId);
+        return collections;
+      }
+
+      operation.processedIds[recordId] = true;
+
       if(!collections.hasOwnProperty(schema.collection)) {
         collections[schema.collection] = [];
       }
 
-      _.forEach(['_id'], key => {
-        result[key] = record[key];
-      });
+      result._id = record._id;
 
       collections[schema.collection].push(result);
     }
@@ -118,7 +133,13 @@ class Executioner {
 
       if(field instanceof Schema === true && field.virtualSchema && record.hasOwnProperty(property)) {
         result[property] = {};
-        await this.transform(field, result[property], collections, record[property]);
+        await this.transform(field, result[property], collections, record[property], operation);
+      } else if (type & FieldTypes.ConditionalSchema) {
+        const schema = field.getSchema(record);
+
+        result[property] = {};
+
+        return this.transform(schema, result[property], collections, record[property], operation);
       } else if(type & FieldTypes.Buffer) {
         if(record.hasOwnProperty(property)) {
           result[property] = record[property].read(0);
@@ -136,11 +157,14 @@ class Executioner {
             const schema = field.schema;
             const listLength = list.length;
             const targetList = new Array(listLength);
+            const promises = new Array(listLength);
 
             for(let j = 0; j < listLength; j++) {
               targetList[j] = {};
-              await this.transform(schema, targetList[j], collections, list[j]);
+              promises[j] = this.transform(schema, targetList[j], collections, list[j], operation);
             }
+
+            await Promise.all(promises);
 
             result[property] = targetList;
           } else {
@@ -159,7 +183,7 @@ class Executioner {
                 _id: {
                   $in: ids
                 }
-              }).toArray();
+              }, operation).toArray();
 
               result[property] = record[property];
             } else {
@@ -172,7 +196,7 @@ class Executioner {
       } else if (type & FieldTypes.SchemaReference) {
         await this.findOne(field.reference, collections, {
           _id: new ObjectId(record[property])
-        });
+        }, operation);
 
         result[property] = record[property];
       } else if([

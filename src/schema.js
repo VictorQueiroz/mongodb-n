@@ -11,7 +11,8 @@ const FieldTypes = {
   Array: 128,
   ForeignerReference: 256,
   Buffer: 512,
-  Schema: 1024
+  Schema: 1024,
+  ConditionalSchema: 2048
 };
 
 class Schema {
