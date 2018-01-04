@@ -21,6 +21,8 @@ const Validators = {
       return _.isNumber(value);
     } else if(field.type & FieldTypes.Array) {
       return _.isArray(value);
+    } else if(field.type & FieldTypes.Boolean) {
+      return _.isBoolean(value);
     } else if(field.type & FieldTypes.ObjectId) {
       if(field.type & FieldTypes.ArrayOf) {
         return value.every(id => ObjectId.isValid(id));
