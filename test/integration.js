@@ -40,6 +40,22 @@ describe('Integration', function() {
     });
   });
 
+  it('should support missing properties in documents', async function() {
+    const { ops: [product] } = await models.Product.getCollection().insertOne({
+      name: 'MacBook Pro'
+    });
+
+    const { products: [product1] } = await models.Product.findOne({
+      _id: product._id
+    });
+
+    assert.deepEqual(product1, {
+      _id: product._id,
+      name: 'MacBook Pro',
+      geopoints: []
+    });
+  });
+
   it('should support "methods" schema property', async function() {
     const [subject1] = await models.Subject.createSubject('subject 1');
 

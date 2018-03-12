@@ -206,12 +206,15 @@ class Executioner {
           throw new Error(`${schema.collection} -> Invalid flags -> "${type}" -> for property "${property}"`);
         }
       } else if (type & FieldTypes.SchemaReference) {
-        await this.findOne(field.reference, collections, {
-          _id: new ObjectId(record[property])
-        }, operation);
+        if(record[property]) {
+          await this.findOne(field.reference, collections, {
+            _id: new ObjectId(record[property])
+          }, operation);
 
-        result[property] = record[property];
+          result[property] = record[property];
+        }
       } else if([
+        Schema.FieldTypes.Date,
         Schema.FieldTypes.Array,
         Schema.FieldTypes.String,
         Schema.FieldTypes.Number,
@@ -219,9 +222,11 @@ class Executioner {
         Schema.FieldTypes.Boolean,
         Schema.FieldTypes.ObjectId
       ].some(f => type & f)) {
-        if(record.hasOwnProperty(property)) {
+        if(record && record.hasOwnProperty(property)) {
           result[property] = record[property];
         }
+      } else {
+        throw new Error('Invalid property type: ' + property);
       }
     }
 
