@@ -11,7 +11,9 @@ const Validators = {
     if(field.type & FieldTypes.ForeignerReference || field.type & FieldTypes.ConditionalSchema) {
       return true;
     }
-    if(field.type & FieldTypes.Buffer) {
+    if(field.type & FieldTypes.Date) {
+      return value instanceof Date;
+    } else if(field.type & FieldTypes.Buffer) {
       return Buffer.isBuffer(value);
     } else if(field.type & FieldTypes.Object) {
       return _.isObject(value);
