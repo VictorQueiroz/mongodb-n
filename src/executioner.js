@@ -18,6 +18,10 @@ class Executioner {
     });
   }
 
+  getCollection(schema){
+    return this.db.collection(schema.collection);
+  }
+
   find(schema, collections, query, operation) {
     return new ExecutionerCursor({
       exec: this,

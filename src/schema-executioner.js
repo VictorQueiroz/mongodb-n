@@ -6,6 +6,10 @@ class SchemaExecutioner {
     this.schema = schema;
   }
 
+  getCollection(){
+    return this.exec.getCollection(this.schema);
+  }
+
   findOne(query) {
     return this.exec.findOne(this.schema, {}, query);
   }
