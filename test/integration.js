@@ -24,6 +24,22 @@ describe('Integration', function() {
     assert.deepEqual(await models.Subject.insertMany([]), []);
   });
 
+  it('should support full schema property value', async function() {
+    const [travel1] = await models.Travel.insertOne({
+      name: 'Travel 1'
+    });
+    const [schedule1] = await models.Schedule.insertOne({
+      travel: travel1
+    });
+
+    assert.deepEqual(await models.Schedule.find({
+      _id: schedule1._id
+    }).toArray(), {
+      schedules: [schedule1],
+      travels: [travel1]
+    });
+  });
+
   it('should support "methods" schema property', async function() {
     const [subject1] = await models.Subject.createSubject('subject 1');
 

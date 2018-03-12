@@ -130,9 +130,18 @@ class Executioner {
 
       const type = this.getFieldType(field);
 
-      if(field instanceof Schema === true && field.virtualSchema && record.hasOwnProperty(property)) {
-        result[property] = {};
-        await this.transform(field, result[property], collections, record[property], operation);
+      if(field instanceof Schema === true) {
+        if(field.virtualSchema) {
+          if(record[property]) {
+            result[property] = {};
+            await this.transform(field, result[property], collections, record[property], operation);
+          }
+        } else if(record[property]) {
+          result[property] = record[property];
+          await this.find(field, collections, {
+            _id: record[property]._id
+          }, operation).toArray();
+        }
       } else if (type & FieldTypes.ConditionalSchema) {
         const schema = field.getSchema(record);
 

@@ -140,9 +140,25 @@ Timeline.Types = {
   UserFavoriteProduct: 'Timeline_UserFavoriteProduct'
 };
 
+const Travel = new Schema({
+  collection: 'travels',
+  fields: {
+    name: FieldTypes.String
+  }
+});
+
+const Schedule = new Schema({
+  collection: 'schedules',
+  fields: {
+    travel: Travel
+  }
+});
+
 module.exports = {
+  Schedule,
   GeoPoint,
   User,
+  Travel,
   Post,
   Picture,
   Product,
