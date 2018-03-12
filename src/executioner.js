@@ -110,7 +110,6 @@ class Executioner {
 
       // avoid already processed documents
       if(operation.processedIds[recordId]){
-        console.log('ignoring %s', recordId);
         return collections;
       }
 
