@@ -4,7 +4,10 @@
   "description": "",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "release": "npx tsc",
+    "coverage": "npx nyc yarn run test",
+    "test": "scripts/test.sh -b",
+    "tdd": "scripts/test.sh -b -w src,test"
   },
   "typings": "./lib/index.d.ts",
   "author": "",
