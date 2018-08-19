@@ -1,0 +1,9 @@
+version: '3.0'
+services:
+  database:
+    container_name: database
+    image: mongo
+  mongodb_n:
+    build: ./mongodb-n
+    volumes:
+      - ../:/opt/app
