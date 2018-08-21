@@ -12,15 +12,15 @@ export default class SchemaExecutioner<T, R> {
   }
 
   public insertOne(document: T) {
-    return this.exec.insertOne(this.schema, document);
+    return this.exec.insertOne<T>(this.schema, document);
   }
 
   public insertMany(document: T[]) {
-    return this.exec.insertMany(this.schema, document);
+    return this.exec.insertMany<T>(this.schema, document);
   }
 
-  public findOne(query?: FilterQuery<T>) {
-    return this.exec.findOne(this.schema, {}, query);
+  public findOne(query?: FilterQuery<T>): Promise<T | void> {
+    return this.exec.findOne<T>(this.schema, {}, query);
   }
 
   public find(query?: FilterQuery<T>): ExecutionerCursor<R> {

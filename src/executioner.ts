@@ -35,7 +35,7 @@ class Executioner<T> {
     });
   }
 
-  public async insertMany(schema: Schema, list: any[]) {
+  public async insertMany<R>(schema: Schema, list: any[]): Promise<R[]> {
     if(list.length) {
       const result = await this.db.collection(schema.getCollectionName()).insertMany(list);
 
@@ -44,32 +44,34 @@ class Executioner<T> {
     return [];
   }
 
-  public async insertOne(schema: Schema, raw: any) {
-    const result = await this.db.collection(schema.getCollectionName()).insertOne(raw);
+  public async insertOne<R>(schema: Schema, raw: any): Promise<R[]> {
+    const result = await this.db.collection<R>(schema.getCollectionName()).insertOne(raw);
 
     return result.ops;
   }
 
-  public async findOne(
+  public async findOne<R>(
     schema: Schema,
     collections: any,
     query?: any,
     operation?: OperationContext
-  ): Promise<void | TransformResult<T>> {
+  ): Promise<void | R> {
     const record = await this.db.collection(schema.getCollectionName()).findOne(query);
 
     if(!record) {
       return;
     }
 
+    const result: any = {};
+
     await this.transform(
       schema,
-      {},
+      result,
       collections,
       record,
       operation
     );
-    return collections;
+    return result;
   }
 
   public getIdsFromRecord(record: any, property: number | string) {

@@ -66,9 +66,9 @@ test('should support missing properties in documents', async () => {
     name: 'MacBook Pro'
   });
 
-  const { products: [product1] } = await models.Product.findOne({
+  const { products: [product1] } = await models.Product.find({
     _id: product._id
-  });
+  }).toArray();
 
   assert.deepEqual(product1, {
     _id: product._id,
@@ -85,7 +85,7 @@ test('should support buffer', async () => {
     width: 0
   });
 
-  assert.deepEqual(await models.Picture.findOne({_id: picture._id}), {
+  assert.deepEqual(await models.Picture.find({_id: picture._id}).toArray(), {
     pictures: [picture]
   });
 });
@@ -105,9 +105,9 @@ test('should support array of predefined schema', async () => {
       subjectId: subject2._id
     }]
   });
-  const result = await models.Politician.findOne({
+  const result = await models.Politician.find({
     _id: politician._id
-  });
+  }).toArray();
   assert.deepEqual(result, {
     politicians: [politician],
     subjects: [subject1, subject2]
@@ -164,7 +164,7 @@ test('should support conditional schema according to raw incoming document data'
     type: schemas.TimelineTypes.UserFavoriteProduct
   });
 
-  assert.deepEqual(await models.Timeline.findOne(), {
+  assert.deepEqual(await models.Timeline.find().toArray(), {
     geopoints: [],
     products: [product],
     timeline: [timeline],
@@ -234,7 +234,7 @@ test('it should define result property with an empty array when received invalid
   const [{ _id }] = await models.Test.insertOne({
     fieldOne: undefined
   });
-  assert.deepEqual(await models.Test.findOne(), {
+  assert.deepEqual(await models.Test.find().toArray(), {
     invalid_schema: [{
       _id,
       fieldOne: []
