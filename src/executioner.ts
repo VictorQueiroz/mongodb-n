@@ -16,8 +16,8 @@ class Executioner<T> {
   constructor(private db: Db) {
   }
 
-  public getCollection(schema: Schema) {
-    return this.db.collection(schema.getCollectionName());
+  public getCollection<R>(schema: Schema) {
+    return this.db.collection<R>(schema.getCollectionName());
   }
 
   public find(

@@ -8,7 +8,7 @@ export default class SchemaExecutioner<T, R> {
   }
 
   public getCollection() {
-    return this.exec.getCollection(this.schema);
+    return this.exec.getCollection<T>(this.schema);
   }
 
   public insertOne(document: T) {
